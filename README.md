@@ -1,77 +1,34 @@
-# refactor-this
-A terribly written Web API project that can be used as a test for potential C# applicants.  It's terrible on purpose, so that you can show us how we can improve it.
+## Objective
+Improve a poorly written project. Apply all aspects of good software engineering (including but not limited to design, reliability, readability, extensibility, quality) and make it #beautiful.
 
-## Getting started for applicants
+## Improvements made
+* Database connection string must not be within source code but in the configuration e.g. web.config
+    * Helpers.cs deleted
+    * Web.Config connection string added
+* Fixed connection string for App_Data located attached database
+* Namespaces must not contain _ underscore
+    * Renamed refactor_me to Product.WebApi
+* Every class must be placed in own file
+    * ProductModel.cs, ProductOptionModel.cs, ProductListModel.cs, OptionListModel.cs created
+* Single resposibility principle applied = do not place database operation into the model objects
+    * Products.cs split into:
+        * Model classes ProductModel, ProductOptionModel, ProductListModel, OptionListModel
+        * Database repository classes ProductRepository, ProductOptionRepository
+* Values must be passed as parameters to SQL query to avoid SQL Injection attack
+* Class naming must clearly indicate the purpose = renamed classes
+* Constructor must only initialize class properties not calling database operation
+* Received values must be always validated
+    * Added data annotations to ProductModel and ProductOptionModel class
+* Project methods changed to asynchonous to improve performance and not block threads
+* When delete a product the related options must be deleted too
+* Web API Http Status Codes should be as follows:
+    * 200 for successful GET
+    * 201 for successful POST or PUT
+    * 400 for not valid request
+    * 404 for missing record
 
-Fork this repository and make your changes to this project to make it better.  Simple.  There are no rules, except that we know that this project is very badly written, on purpose.  So, your job, should you choose to accept it, is to make the project better in any way you see fit.
-
-To set up the project:
-
-* Visual Studio 2015 is preferred.
-* Open in VS.
-* Restore nuget packages and rebuild.
-* Run the project.
-
-There should be these endpoints:
-
-1. `GET /products` - gets all products.
-2. `GET /products?name={name}` - finds all products matching the specified name.
-3. `GET /products/{id}` - gets the project that matches the specified ID - ID is a GUID.
-4. `POST /products` - creates a new product.
-5. `PUT /products/{id}` - updates a product.
-6. `DELETE /products/{id}` - deletes a product and its options.
-7. `GET /products/{id}/options` - finds all options for a specified product.
-8. `GET /products/{id}/options/{optionId}` - finds the specified product option for the specified product.
-9. `POST /products/{id}/options` - adds a new product option to the specified product.
-10. `PUT /products/{id}/options/{optionId}` - updates the specified product option.
-11. `DELETE /products/{id}/options/{optionId}` - deletes the specified product option.
-
-All models are specified in the `/Models` folder, but should conform to:
-
-**Product:**
-```
-{
-  "Id": "01234567-89ab-cdef-0123-456789abcdef",
-  "Name": "Product name",
-  "Description": "Product description",
-  "Price": 123.45,
-  "DeliveryPrice": 12.34
-}
-```
-
-**Products:**
-```
-{
-  "Items": [
-    {
-      // product
-    },
-    {
-      // product
-    }
-  ]
-}
-```
-
-**Product Option:**
-```
-{
-  "Id": "01234567-89ab-cdef-0123-456789abcdef",
-  "Name": "Product name",
-  "Description": "Product description"
-}
-```
-
-**Product Options:**
-```
-{
-  "Items": [
-    {
-      // product option
-    },
-    {
-      // product option
-    }
-  ]
-}
-```
+## Future improvements recommended
+* Database layer recommend to put in own library project to separate from "presentation" layer
+* Need to add Unit Testing
+* Use SQL Server pro production environment
+* Consider using MongoDB as a storage for product with options model
