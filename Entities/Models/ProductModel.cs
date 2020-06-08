@@ -1,14 +1,15 @@
-﻿using Newtonsoft.Json;
+﻿using Contracts.Models;
+using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 
-namespace WebApi.Models
+namespace Entities.Models
 {
     /// <summary>
     /// hold product model information
     /// </summary>
-    public class ProductModel
+    public class ProductModel : IProduct
     {
         /// <summary>
         /// unique key id

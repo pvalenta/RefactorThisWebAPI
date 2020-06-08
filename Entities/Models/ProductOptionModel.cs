@@ -1,13 +1,14 @@
-﻿using System;
+﻿using Contracts.Models;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 
-namespace WebApi.Models
+namespace Entities.Models
 {
     /// <summary>
     /// hold product option information
     /// </summary>
-    public class ProductOptionModel
+    public class ProductOptionModel : IProductOption
     {
         /// <summary>
         /// unique key id

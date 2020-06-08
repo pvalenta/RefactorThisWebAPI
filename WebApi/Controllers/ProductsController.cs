@@ -1,16 +1,31 @@
 ﻿using System;
 using System.Net;
 using System.Web.Http;
-using WebApi.Repositories;
 using WebApi.Models;
 using System.Threading.Tasks;
 using System.Net.Http;
+using Contracts.Repositories;
+using Contracts.Models;
 
 namespace WebApi.Controllers
 {
     [RoutePrefix("products")]
     public class ProductsController : ApiController
     {
+        IProductRepository productRepository;
+        IProductOptionRepository productOptionRepository;
+
+        /// <summary>
+        /// constructor with injection
+        /// </summary>
+        /// <param name="product">product repository</param>
+        /// <param name="productOption">product option repository</param>
+        public ProductsController(IProductRepository product, IProductOptionRepository productOption)
+        {
+            productRepository = product;
+            productOptionRepository = productOption;
+        }
+
         /// <summary>
         /// retrieve all products
         /// </summary>
@@ -19,8 +34,7 @@ namespace WebApi.Controllers
         [HttpGet]
         public async Task<ProductListModel> GetAll()
         {
-            var repository = new ProductRepository();
-            var model = new ProductListModel { Items = await repository.GetAllProductsAsync() };
+            var model = new ProductListModel { Items = await productRepository.GetAllAsync() };
 
             return model;
         }
@@ -34,8 +48,7 @@ namespace WebApi.Controllers
         [HttpGet]
         public async Task<ProductListModel> SearchByName(string name)
         {
-            var repository = new ProductRepository();
-            var model = new ProductListModel { Items = await repository.GetProductsByNameAsync(name) };
+            var model = new ProductListModel { Items = await productRepository.GetByNameAsync(name) };
 
             return model;
         }
@@ -47,10 +60,9 @@ namespace WebApi.Controllers
         /// <returns>matching product</returns>
         [Route("{id}")]
         [HttpGet]
-        public async Task<ProductModel> GetProduct(Guid id)
+        public async Task<IProduct> GetProduct(Guid id)
         {
-            var repository = new ProductRepository();
-            var model = await repository.GetProductAsync(id);
+            var model = await productRepository.GetByIdAsync(id);
 
             if (model == null) throw new HttpResponseException(HttpStatusCode.NotFound);
 
@@ -64,13 +76,12 @@ namespace WebApi.Controllers
         /// <returns>operation result</returns>
         [Route]
         [HttpPost]
-        public async Task<HttpResponseMessage> Create(ProductModel product)
+        public async Task<HttpResponseMessage> Create(IProduct product)
         {
             // validate
             if (!ModelState.IsValid) return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
 
-            var repository = new ProductRepository();
-            await repository.CreateProductAsync(product);
+            await productRepository.CreateAsync(product);
 
             return new HttpResponseMessage(HttpStatusCode.Created);
         }
@@ -83,13 +94,12 @@ namespace WebApi.Controllers
         /// <returns>operation result</returns>
         [Route("{id}")]
         [HttpPut]
-        public async Task<HttpResponseMessage> Update(Guid id, ProductModel product)
+        public async Task<HttpResponseMessage> Update(Guid id, IProduct product)
         {
             // validate
             if (!ModelState.IsValid) return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
 
-            var repository = new ProductRepository();
-            var current = await repository.GetProductAsync(id);
+            var current = await productRepository.GetByIdAsync(id);
 
             if (current == null) return Request.CreateResponse(HttpStatusCode.NotFound);
 
@@ -98,7 +108,7 @@ namespace WebApi.Controllers
             current.Price = product.Price;
             current.DeliveryPrice = product.DeliveryPrice;
 
-            await repository.UpdateProductAsync(current);
+            await productRepository.UpdateAsync(current);
 
             return new HttpResponseMessage(HttpStatusCode.Created);
         }
@@ -112,12 +122,11 @@ namespace WebApi.Controllers
         [HttpDelete]
         public async Task<HttpResponseMessage> Delete(Guid id)
         {
-            var repository = new ProductRepository();
-            var current = await repository.GetProductAsync(id);
+            var current = await productRepository.GetByIdAsync(id);
 
             if (current == null) return Request.CreateResponse(HttpStatusCode.NotFound);
 
-            await repository.DeleteProductAsync(current.Id);
+            await productRepository.DeleteAsync(current.Id);
 
             return new HttpResponseMessage(HttpStatusCode.OK);
         }
@@ -131,8 +140,7 @@ namespace WebApi.Controllers
         [HttpGet]
         public async Task<ProductOptionListModel> GetOptions(Guid productId)
         {
-            var repository = new ProductOptionRepository();
-            var model = new ProductOptionListModel { Items = await repository.GetAllProductOptionsAsync(productId) };
+            var model = new ProductOptionListModel { Items = await productOptionRepository.GetByProductIdAsync(productId) };
 
             return model;
         }
@@ -145,10 +153,9 @@ namespace WebApi.Controllers
         /// <returns>product option</returns>
         [Route("{productId}/options/{id}")]
         [HttpGet]
-        public async Task<ProductOptionModel> GetOption(Guid productId, Guid id)
+        public async Task<IProductOption> GetOption(Guid productId, Guid id)
         {
-            var repository = new ProductOptionRepository();
-            var model = await repository.GetProductOptionAsync(id);
+            var model = await productOptionRepository.GetByIdAsync(id);
 
             if (model == null) throw new HttpResponseException(HttpStatusCode.NotFound);
 
@@ -162,13 +169,12 @@ namespace WebApi.Controllers
         /// <param name="option">option</param>
         [Route("{productId}/options")]
         [HttpPost]
-        public async Task<HttpResponseMessage> CreateOption(Guid productId, ProductOptionModel option)
+        public async Task<HttpResponseMessage> CreateOption(Guid productId, IProductOption option)
         {
             // validate
             if (!ModelState.IsValid) return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
 
-            var repository = new ProductOptionRepository();
-            await repository.CreateProductOptionAsync(productId, option);
+            await productOptionRepository.CreateAsync(productId, option);
 
             return new HttpResponseMessage(HttpStatusCode.Created);
         }
@@ -180,20 +186,19 @@ namespace WebApi.Controllers
         /// <param name="option">option</param>
         [Route("{productId}/options/{id}")]
         [HttpPut]
-        public async Task<HttpResponseMessage> UpdateOption(Guid id, ProductOptionModel option)
+        public async Task<HttpResponseMessage> UpdateOption(Guid id, IProductOption option)
         {
             // validate
             if (!ModelState.IsValid) return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
 
-            var repository = new ProductOptionRepository();
-            var current = await repository.GetProductOptionAsync(id);
+            var current = await productOptionRepository.GetByIdAsync(id);
 
             if (current == null) return Request.CreateResponse(HttpStatusCode.NotFound);
 
             current.Name = option.Name;
             current.Description = option.Description;
 
-            await repository.UpdateProductOptionAsync(current);
+            await productOptionRepository.UpdateAsync(current);
 
             return new HttpResponseMessage(HttpStatusCode.Created);
         }
@@ -206,12 +211,11 @@ namespace WebApi.Controllers
         [HttpDelete]
         public async Task<HttpResponseMessage> DeleteOption(Guid id)
         {
-            var repository = new ProductOptionRepository();
-            var current = await repository.GetProductOptionAsync(id);
+            var current = await productOptionRepository.GetByIdAsync(id);
 
             if (current == null) return Request.CreateResponse(HttpStatusCode.NotFound);
 
-            await repository.DeleteProductOptionAsync(current.Id);
+            await productOptionRepository.DeleteAsync(current.Id);
 
             return new HttpResponseMessage(HttpStatusCode.OK);
         }

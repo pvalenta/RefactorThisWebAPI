@@ -1,27 +1,26 @@
-﻿using WebApi.App_Start;
-using WebApi.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using Contracts.Models;
+using Contracts.Repositories;
+using Entities.Models;
 
-namespace WebApi.Repositories
+namespace LocalSqlRepository
 {
     /// <summary>
     /// retrive/store product options from database (CRUD methods)
     /// </summary>
-    public class ProductOptionRepository
+    public class ProductOptionRepository : BaseRepository, IProductOptionRepository
     {
-        string connString = ConfigurationHelper.ConnectionString;
-
         /// <summary>
         /// get all product options
         /// </summary>
         /// <param name="productId">product id</param>
         /// <returns>list of all product options</returns>
-        public async Task<List<ProductOptionModel>> GetAllProductOptionsAsync(Guid productId)
+        public async Task<List<IProductOption>> GetByProductIdAsync(Guid productId)
         {
-            var result = new List<ProductOptionModel>();
+            var result = new List<IProductOption>();
 
             using (var conn = new SqlConnection(connString))
             {
@@ -44,9 +43,9 @@ namespace WebApi.Repositories
         /// </summary>
         /// <param name="optionId">option id</param>
         /// <returns>product option</returns>
-        public async Task<ProductOptionModel> GetProductOptionAsync(Guid id)
+        public async Task<IProductOption> GetByIdAsync(Guid id)
         {
-            ProductOptionModel result = null;
+            IProductOption result = null;
 
             using (var conn = new SqlConnection(connString))
             {
@@ -70,7 +69,7 @@ namespace WebApi.Repositories
         /// <param name="productId">product id</param>
         /// <param name="option">option</param>
         /// <returns></returns>
-        public async Task CreateProductOptionAsync(Guid productId, ProductOptionModel option)
+        public async Task CreateAsync(Guid productId, IProductOption option)
         {
             using (var conn = new SqlConnection(connString))
             {
@@ -94,7 +93,7 @@ namespace WebApi.Repositories
         /// </summary>
         /// <param name="option">option</param>
         /// <returns></returns>
-        public async Task UpdateProductOptionAsync(ProductOptionModel option)
+        public async Task UpdateAsync(IProductOption option)
         {
             using (var conn = new SqlConnection(connString))
             {
@@ -117,7 +116,7 @@ namespace WebApi.Repositories
         /// </summary>
         /// <param name="id">option id</param>
         /// <returns></returns>
-        public async Task DeleteProductOptionAsync(Guid id)
+        public async Task DeleteAsync(Guid id)
         {
             using (var conn = new SqlConnection(connString))
             {

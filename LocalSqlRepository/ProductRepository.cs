@@ -1,26 +1,27 @@
-﻿using WebApi.App_Start;
-using WebApi.Models;
+﻿using Contracts.Models;
+using Contracts.Repositories;
+using Entities.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 
-namespace WebApi.Repositories
+namespace LocalSqlRepository
 {
     /// <summary>
     /// retrive/store products from database (CRUD methods)
     /// </summary>
-    internal class ProductRepository
+    public class ProductRepository : BaseRepository, IProductRepository
     {
-        string connString = ConfigurationHelper.ConnectionString;
+        public ProductRepository() { }
 
         /// <summary>
         /// get all products
         /// </summary>
         /// <returns>list of all products</returns>
-        public async Task<List<ProductModel>> GetAllProductsAsync()
+        public async Task<List<IProduct>> GetAllAsync()
         {
-            var result = new List<ProductModel>();
+            var result = new List<IProduct>();
 
             using (var conn = new SqlConnection(connString))
             {
@@ -42,9 +43,9 @@ namespace WebApi.Repositories
         /// </summary>
         /// <param name="name">product name</param>
         /// <returns>list of matching products</returns>
-        public async Task<List<ProductModel>> GetProductsByNameAsync(string name)
+        public async Task<List<IProduct>> GetByNameAsync(string name)
         {
-            var result = new List<ProductModel>();
+            var result = new List<IProduct>();
 
             using (var conn = new SqlConnection(connString))
             {
@@ -68,9 +69,9 @@ namespace WebApi.Repositories
         /// </summary>
         /// <param name="id">product id</param>
         /// <returns>product</returns>
-        public async Task<ProductModel> GetProductAsync(Guid id)
+        public async Task<IProduct> GetByIdAsync(Guid id)
         {
-            ProductModel result = null;
+            IProduct result = null;
 
             using (var conn = new SqlConnection(connString))
             {
@@ -94,7 +95,7 @@ namespace WebApi.Repositories
         /// </summary>
         /// <param name="product">product</param>
         /// <returns></returns>
-        public async Task CreateProductAsync(ProductModel product)
+        public async Task CreateAsync(IProduct product)
         {
             using (var conn = new SqlConnection(connString))
             {
@@ -119,7 +120,7 @@ namespace WebApi.Repositories
         /// </summary>
         /// <param name="product">product</param>
         /// <returns></returns>
-        public async Task UpdateProductAsync(ProductModel product)
+        public async Task UpdateAsync(IProduct product)
         {
             using (var conn = new SqlConnection(connString))
             {
@@ -144,7 +145,7 @@ namespace WebApi.Repositories
         /// </summary>
         /// <param name="id">product id</param>
         /// <returns></returns>
-        public async Task DeleteProductAsync(Guid id)
+        public async Task DeleteAsync(Guid id)
         {
             using (var conn = new SqlConnection(connString))
             {

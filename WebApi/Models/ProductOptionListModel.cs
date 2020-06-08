@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Contracts.Models;
+using System.Collections.Generic;
 
 namespace WebApi.Models
 {
@@ -10,6 +11,6 @@ namespace WebApi.Models
         /// <summary>
         /// list of items
         /// </summary>
-        public List<ProductOptionModel> Items { get; set; }
+        public List<IProductOption> Items { get; set; }
     }
 }
