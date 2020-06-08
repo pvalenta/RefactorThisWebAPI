@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using Contracts.Repositories;
 using Contracts.Models;
+using Entities.Models;
 
 namespace WebApi.Controllers
 {
@@ -76,7 +77,7 @@ namespace WebApi.Controllers
         /// <returns>operation result</returns>
         [Route]
         [HttpPost]
-        public async Task<HttpResponseMessage> Create(IProduct product)
+        public async Task<HttpResponseMessage> Create(ProductModel product)
         {
             // validate
             if (!ModelState.IsValid) return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
@@ -94,7 +95,7 @@ namespace WebApi.Controllers
         /// <returns>operation result</returns>
         [Route("{id}")]
         [HttpPut]
-        public async Task<HttpResponseMessage> Update(Guid id, IProduct product)
+        public async Task<HttpResponseMessage> Update(Guid id, ProductModel product)
         {
             // validate
             if (!ModelState.IsValid) return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
@@ -169,7 +170,7 @@ namespace WebApi.Controllers
         /// <param name="option">option</param>
         [Route("{productId}/options")]
         [HttpPost]
-        public async Task<HttpResponseMessage> CreateOption(Guid productId, IProductOption option)
+        public async Task<HttpResponseMessage> CreateOption(Guid productId, ProductOptionModel option)
         {
             // validate
             if (!ModelState.IsValid) return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
@@ -186,7 +187,7 @@ namespace WebApi.Controllers
         /// <param name="option">option</param>
         [Route("{productId}/options/{id}")]
         [HttpPut]
-        public async Task<HttpResponseMessage> UpdateOption(Guid id, IProductOption option)
+        public async Task<HttpResponseMessage> UpdateOption(Guid id, ProductOptionModel option)
         {
             // validate
             if (!ModelState.IsValid) return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);

@@ -116,6 +116,10 @@
       <Project>{3D71C0C8-5B2D-4F82-901A-EB2FB7BB097A}</Project>
       <Name>Contracts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Entities\Entities.csproj">
+      <Project>{576CDA68-790F-43A9-A47A-3FA016D05FE7}</Project>
+      <Name>Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LocalSqlRepository\LocalSqlRepository.csproj">
       <Project>{c273fd0b-8d83-4448-8a81-6a782dd61813}</Project>
       <Name>LocalSqlRepository</Name>

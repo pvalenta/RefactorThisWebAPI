@@ -33,7 +33,6 @@ Improve a poorly written project. Apply all aspects of good software engineering
     * Contracts: contain interfaces for Models and Repositories (abstraction layer)
     * Entities: contain domain models ProductModel, ProductOptionModel with abstraction layer for database (IDataReader)
     * LocalSqlRepository: this library implement LocalSQL database repository following Contracts and Models
-    * classes ProductModel, ProductOptionModel, ProductListModel, OptionListModel
     * Database repository classes ProductRepository, ProductOptionRepository
 * Added Dependency Injection with Unity Container
 
